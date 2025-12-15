@@ -8,11 +8,14 @@ app.use(cors());
 app.use(express.json());
 
 // init DB
+
+
+//Table of List Habit
+// get all habits
 const adapter = new JSONFile("db.json");
 const db = new Low(adapter, { habits: [] });
 await db.read();
 
-// get all habits
 app.get("/habits", (req, res) => {
   const data = db.data.habits
   res.json({
@@ -21,37 +24,57 @@ app.get("/habits", (req, res) => {
 });
 
 // create habit
-app.post("/habits", async (req, res) => {
-  const habit = {
-    id: Date.now(),
-    title: req.body.title,
-    description: req.body.description || "",
-    streak: 0,
-    lastUpdated: null
+app.post("/add-habit", async (req, res) => {
+  const data = req.body
+  const payload = {
+    habit: data.habit
   };
 
-  db.data.habits.push(habit);
+  db.data.habits.push(payload.habit);
   await db.write();
-  res.json(habit);
+  res.json({data: payload});
 });
 
-// update streak
-app.put("/habits/:id", async (req, res) => {
-  const habit = db.data.habits.find(h => h.id == req.params.id);
-  if (!habit) return res.status(404).json({ msg: "Habit not found" });
 
-  const today = new Date().toDateString();
-  const last = habit.lastUpdated ? new Date(habit.lastUpdated).toDateString() : null;
+// Table of Tracker Habit
+app.put("/update", async (req, res) => {
+  const { habitName, year, month, day, isDone } = req.body;
+  const fileName = `${year}_${month}_Done.json`
+  //  const fileName = `${year}-${month}-DONE.json`;
+  console.log(fileName)
+  const adapter = new JSONFile(fileName);
+  const db = new Low(adapter, {});
+  await db.read();
+  
+  db.data ||= {};
 
-  if (today !== last) {
-    habit.streak += 1;
+  // pastikan tiap hari berupa array
+  db.data[day] ||= [];
+
+  // tambahkan habit ke array jika belum ada
+  if (!db.data[day].includes(habitName)) {
+    db.data[day].push(habitName);
   }
 
-  habit.lastUpdated = new Date();
-  await db.write();
 
-  res.json(habit);
+  await db.write(); // SIMPAN KE FILE
+
+  res.json({ success: true });
 });
+
+app.get("/habit/progress", async (req, res) => {
+  const { year, month } = req.body;
+
+  const fileName = `${year}_${month}_Done.json`
+  const adapter = new JSONFile(fileName);
+  const db = new Low(adapter, {});
+  await db.read();
+
+  db.data ||= {};  // kalau file masih kosong
+
+  res.json(db.data);
+});
+
 
 // delete habit
 app.delete("/habits/:id", async (req, res) => {

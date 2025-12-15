@@ -1,13 +1,6 @@
 {
-  "habits": [],
-  "history": [
-    {
-      "date": "2025-12-12",
-      "done": [
-        1,
-        2,
-        5
-      ]
-    }
+  "habits": [
+    "Tahajjud",
+    "Subuh di Mesjid"
   ]
 }
