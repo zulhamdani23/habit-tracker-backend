@@ -40,7 +40,7 @@ app.post("/add-habit", async (req, res) => {
 app.put("/update", async (req, res) => {
   const { habitName, year, month, day, isDone } = req.body;
   const fileName = `${year}_${month}_Done.json`
-  //  const fileName = `${year}-${month}-DONE.json`;
+  
   console.log(fileName)
   const adapter = new JSONFile(fileName);
   const db = new Low(adapter, {});
@@ -62,17 +62,21 @@ app.put("/update", async (req, res) => {
   res.json({ success: true });
 });
 
-app.get("/habit/progress", async (req, res) => {
-  const { year, month } = req.body;
-
-  const fileName = `${year}_${month}_Done.json`
-  const adapter = new JSONFile(fileName);
-  const db = new Low(adapter, {});
-  await db.read();
-
-  db.data ||= {};  // kalau file masih kosong
-
-  res.json(db.data);
+app.post("/habit/progress", async (req, res) => {
+  try {
+    const { year, month } = req.body;
+    const yr = parseInt(year.replace(/"/g, ""), 10);
+    const mt = parseInt(month.replace(/"/g, ""), 10);
+    const fileName = `${yr}_${mt}_Done.json`
+    console.log(fileName)
+    const adapter = new JSONFile(fileName);
+    const db = new Low(adapter, {});
+    await db.read();
+    db.data ||= {};  // kalau file masih kosong
+    res.json(db.data);
+  } catch (error) {
+    console.log(error)
+  }
 });
 
 
