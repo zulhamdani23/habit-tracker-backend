@@ -7,9 +7,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// init DB
-
-
 //Table of List Habit
 // get all habits
 const adapter = new JSONFile("db.json");
@@ -36,28 +33,35 @@ app.post("/add-habit", async (req, res) => {
 });
 
 
-// Table of Tracker Habit
 app.put("/update", async (req, res) => {
   const { habitName, year, month, day, isDone } = req.body;
-  const fileName = `${year}_${month}_Done.json`
-  
-  console.log(fileName)
+
+  const fileName = `${year}_${month}_Done.json`;
   const adapter = new JSONFile(fileName);
   const db = new Low(adapter, {});
+
   await db.read();
-  
   db.data ||= {};
 
   // pastikan tiap hari berupa array
   db.data[day] ||= [];
 
-  // tambahkan habit ke array jika belum ada
-  if (!db.data[day].includes(habitName)) {
-    db.data[day].push(habitName);
+  if (isDone) {
+    // ✔ CHECK
+    if (!db.data[day].includes(habitName)) {
+      db.data[day].push(habitName);
+    }
+  } else {
+    // ❌ UNCHECK
+    db.data[day] = db.data[day].filter(h => h !== habitName);
+
+    // kalau hari kosong → hapus key
+    if (db.data[day].length === 0) {
+      delete db.data[day];
+    }
   }
 
-
-  await db.write(); // SIMPAN KE FILE
+  await db.write();
 
   res.json({ success: true });
 });
@@ -68,7 +72,6 @@ app.post("/habit/progress", async (req, res) => {
     const yr = parseInt(year.replace(/"/g, ""), 10);
     const mt = parseInt(month.replace(/"/g, ""), 10);
     const fileName = `${yr}_${mt}_Done.json`
-    console.log(fileName)
     const adapter = new JSONFile(fileName);
     const db = new Low(adapter, {});
     await db.read();
@@ -120,7 +123,6 @@ app.post("/history", async (req, res) => {
   await db.write();
   res.json(record);
 });
-
 
 const PORT = 5000;
 app.listen(PORT, () => console.log("🚀 Backend running at http://localhost:" + PORT));
