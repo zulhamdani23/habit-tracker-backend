@@ -4,13 +4,13 @@
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js",
-    "start": "node server.js"
+    "dev": "nodemon service.js",
+    "start": "nodemon service.js"
   },
   "author": "zulhamdani",
   "license": "ISC",
   "description": "",
-  "type": "module",
+  "type": "commonjs",
   "dependencies": {
     "bcrypt": "^6.0.0",
     "body-parser": "^2.2.1",
@@ -18,9 +18,12 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+    "lodash": "^4.17.21",
     "lowdb": "^7.0.1",
     "mongoose": "^8.20.2",
     "nano-id": "^1.1.0",
-    "nodemon": "^3.1.11"
+    "nodemon": "^3.1.11",
+    "pg": "^8.16.3",
+    "sequelize": "^6.37.7"
   }
 }

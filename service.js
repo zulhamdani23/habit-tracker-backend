@@ -1,20 +1,23 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import connectDB from "./src/config/db.js";
-import habitRoutes from "./src/routes/habitRoutes.js";
-import authRoutes from "./src/routes/authRoutes.js";
+require('dotenv').config();
+const express = require("express");
+const cors = require("cors");
+const dotenv = require("dotenv");
+const routesApi = require("./src/route/routes.js")
+const resMsg = require("./src/util/resMessage.js")
+const stCode = require("./src/util/statusCode.js")
 
 dotenv.config();
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-connectDB();
-
-app.get("/", (req, res) => res.send("Habit Tracker API is running"));
-app.use("/api/auth", authRoutes);
-app.use("/api/habits", habitRoutes);
+app.get("/connect", (req, res) => {
+    res.status(stCode.OK).json(
+        resMsg.success([])
+    )
+})
+app.use("/api/habit", routesApi.habitRoutes);
+app.use("/api/habitTracker", routesApi.habitTrackerRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log("Server running on port " + PORT));
