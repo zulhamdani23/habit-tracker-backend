@@ -1,6 +1,6 @@
-const habitRoutes = require("./habitRoute")
-const habitTrackerRoutes = require("./habitTrackerRoutes")
+const habitRoute = require("./habitRoute")
+const habitTrackerRoute = require("./habitTrackerRoute")
 
 module.exports = {
-    habitRoutes, habitTrackerRoutes
+    habitRoute, habitTrackerRoute
 }

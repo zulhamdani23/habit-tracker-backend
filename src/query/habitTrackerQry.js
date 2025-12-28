@@ -1,5 +1,12 @@
 const habitTrackerQry = {}
 
+habitTrackerQry.listHabit = `SELECT 
+ id, habit_name, is_active 
+FROM habit_tracker.habit 
+WHERE 
+ is_active = TRUE 
+ORDER BY id ASC;`
+
 habitTrackerQry.cekDone = `SELECT 
   id, is_done 
 FROM habit_tracker.habit_progress hp 

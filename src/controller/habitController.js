@@ -19,5 +19,34 @@ habitController.list = async (req, res) => {
     }
 }
 
+habitController.addHabit = async (req, res) => {
+    try {
+        let payload = req.body
+        await service.addHabit(payload)
+        res.status(stCode.OK).json(
+            resMsg.success({})
+        )
+    } catch (error) {
+        res.status(stCode.INTERNAL_ERROR).json(
+            resMsg.failed(error.message)
+        )
+    }
+}
+
+habitController.aktifasi = async (req, res) => {
+    try {
+        let isActive = req.body.isActive
+        let id = req.body.id
+        await service.aktifasi(isActive, id)
+        res.status(stCode.OK).json(
+            resMsg.success({})
+        )
+    } catch (error) {
+        res.status(stCode.INTERNAL_ERROR).json(
+            resMsg.failed(error.message)
+        )
+    }
+}
+
 
 module.exports = habitController;

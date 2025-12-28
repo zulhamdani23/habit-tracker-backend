@@ -7,6 +7,19 @@ const _ = require("lodash")
 
 const habitTrackerController = {}
 
+habitTrackerController.list = async (req, res) => {
+    try {
+        let data = await service.listHabit()
+        res.status(stCode.OK).json(
+            resMsg.success(data)
+        )
+    } catch (error) {
+        res.status(stCode.INTERNAL_ERROR).json(
+            resMsg.failed(error.message)
+        )
+    }
+}
+
 habitTrackerController.isDone = async (req, res) => {
     try {
         let payload = req.body;
@@ -32,7 +45,7 @@ habitTrackerController.summary =  async (req, res) => {
     const payload = req.body;
     const days = payload.days
     const dataDb = await service.summary(payload)
-    const defVal = await serviceHabit.listHabit()
+    const defVal = await service.listHabit()
     const data = await service.summaryMapper(days, defVal, dataDb)
     res.status(stCode.OK).json(
         resMsg.success(data)

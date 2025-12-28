@@ -16,8 +16,8 @@ app.get("/connect", (req, res) => {
         resMsg.success([])
     )
 })
-app.use("/api/habit", routesApi.habitRoutes);
-app.use("/api/habitTracker", routesApi.habitTrackerRoutes);
+app.use("/api/habit", routesApi.habitRoute);
+app.use("/api/habitTracker", routesApi.habitTrackerRoute);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log("Server running on port " + PORT));

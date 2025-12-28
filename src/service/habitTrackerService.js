@@ -4,6 +4,21 @@ const rawQuery = require("../query/habitTrackerQry")
 const dto = require("../dtoMapper/habitTrackerDto")
 const { result } = require("lodash")
 
+habitTrackerSvc.listHabit = async () => {
+    try {
+        let data = []
+        let dataQry = await db.query(rawQuery.listHabit, {
+            type: db.QueryTypes.SELECT
+        })
+
+        if (dataQry.length > 0 ) {
+            data = dto.entityToDtoListHabit(dataQry)
+        }
+        return data
+    } catch (error) {
+        throw new Error(error.message)
+    }
+}
 habitTrackerSvc.cekDone = async (payload) => {
     const { idHabit, isDone, day, month, year } = payload;
     try {
@@ -12,7 +27,6 @@ habitTrackerSvc.cekDone = async (payload) => {
             replacements : {idHabit, day, month, year},
             type: db.QueryTypes.SELECT
         })
-        console.log(dataQry)
         if (dataQry.length > 0 ) {
             data = dto.entityToDtoCekDone(dataQry[0])
         }
@@ -33,7 +47,6 @@ habitTrackerSvc.isDone = async (payload) => {
         data = true
         return data
     } catch (error) {
-        console.log(error.message)
         throw new Error(error.message)
     }
 }
@@ -76,11 +89,18 @@ habitTrackerSvc.summaryMapper = async (days, defVal, dataDb) => {
             if(!dataInit[e.id]) dataInit[e.id] = []
             dataInit[e.id].push(e.day)
         });
+
         if(dataDb.length === 0) {
             for (let e of defVal) {
                 data[e.id] = Array(days).fill(false);
             }
         } else {
+            
+            for (let idHabit of defVal) {
+                let id = idHabit.id
+                if (!dataInit[id]) dataInit[id] = []
+            }
+
             for (let key in dataInit) {
                 const valuesDoneTrueOrFalse = dataInit[key]
                 data[key] = []

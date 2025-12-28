@@ -20,4 +20,40 @@ habitSvc.listHabit = async () => {
     }
 }
 
+habitSvc.addHabit = async (payload) => {
+    const { id, habitName, isActive} = payload
+    try {
+        const idExist = await db.query(rawQuery.exist, {
+            replacements : { id },
+            type: db.QueryTypes.SELECT
+        })
+        if (idExist.length > 0) {
+            await db.query(rawQuery.updateHabitName, {
+                replacements : { id, habitName },
+                type: db.QueryTypes.UPDATE
+            })
+        } else {
+            await db.query(rawQuery.addHabit, {
+                replacements : { habitName },
+                type: db.QueryTypes.INSERT
+            })
+        }
+        return true
+    } catch (error) {
+        throw new Error(error.message)
+    }
+} 
+
+habitSvc.aktifasi = async (isActive, id) => {
+    try {
+        await db.query(rawQuery.aktifasi, {
+            replacements : { isActive, id },
+            type: db.QueryTypes.UPDATE
+        })
+        return true
+    } catch (error) {
+        throw new Error(error.message)
+    }
+} 
+
 module.exports = habitSvc;
