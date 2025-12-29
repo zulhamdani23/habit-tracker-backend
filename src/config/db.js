@@ -5,7 +5,7 @@ const db = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.D
 	port: process.env.DB_PORT,
 	logging : false,
 	pool: {
-	    max: 200,
+	    max: 10,
 	    min: 0,
 	    idle: 20000,
 	    acquire: 200000
